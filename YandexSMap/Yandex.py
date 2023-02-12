@@ -16,6 +16,7 @@ class MyWidget(QMainWindow):
         self.coord12 = 36.241424
         self.coord22 = 51.730848
         self.map_type = "map"
+        self.searcht = None
         self.setWindowTitle('Static Maps work') 
         self.coord1.setText(str(self.coord12))
         self.coord2.setText(str(self.coord22))
@@ -33,17 +34,18 @@ class MyWidget(QMainWindow):
                 self.z -= 1
         if event.key() == QtCore.Qt.Key_D:
             if self.coord12 <= 179.95:
-                self.coord1.setText(str(round(self.coord12 + 0.1, 5)))
+                self.coord1.setText(str(round(self.coord12 + 0.01, 5)))
         if event.key() == QtCore.Qt.Key_S:
             if self.coord22 >= -88.95:
-                self.coord2.setText(str(round(self.coord22 - 0.1, 5)))
+                self.coord2.setText(str(round(self.coord22 - 0.01, 5)))
         if event.key() == QtCore.Qt.Key_A:
             if self.coord12 >= -179.95:
-                self.coord1.setText(str(round(self.coord12 - 0.1, 5)))
+                self.coord1.setText(str(round(self.coord12 - 0.01, 5)))
         if event.key() == QtCore.Qt.Key_W:
             if self.coord22 <= 88.95:
-                self.coord2.setText(str(round(self.coord22 + 0.1, 5)))
+                self.coord2.setText(str(round(self.coord22 + 0.01, 5)))
         self.button()
+        self.tart()
         event.accept()
 
     def button(self):
@@ -63,9 +65,13 @@ class MyWidget(QMainWindow):
             self.coord22 = -85
         if self.coord22 >= 88.95:
             self.coord22 = 85
-        self.tart(self.coord12, self.coord22)
+        self.coord1.setText(str(self.coord12))
+        self.coord2.setText(str(self.coord22))
+        self.tart()
 
-    def tart(self, coord1, coord2):
+    def tart(self):
+        coord1 = self.coord1.text()
+        coord2 = self.coord2.text()
         if self.r1.isChecked():
             self.map_type = "map"
         if self.r2.isChecked():
@@ -76,7 +82,8 @@ class MyWidget(QMainWindow):
             float(self.search.text())
             self.label_3.setText("Поиск : Некорректный запрос")
         except ValueError:
-            if self.search.text() != "":
+            print(self.searcht)
+            if self.search.text() != self.searcht:
                 response = requests.get(f"http://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={self.search.text()}&format=json")
                 if response:
                     json_response = response.json()
@@ -89,6 +96,7 @@ class MyWidget(QMainWindow):
                         self.coord1.setText(str(coords[0]))
                         self.coord2.setText(str(coords[1]))
                         self.label_3.setText(f'Поиск : {toponym["metaDataProperty"]["GeocoderMetaData"]["text"]}')
+                        self.searcht = self.search.text()
                     except:
                         self.label_3.setText("Поиск : Некорректный запрос")
                         image = requests.get(
@@ -98,7 +106,7 @@ class MyWidget(QMainWindow):
                     image = requests.get(
                         f"https://static-maps.yandex.ru/1.x/?ll={coord1},{coord2}&z={self.z}&size=450,450&l={self.map_type}")
             else:
-                self.label_3.setText("Поиск : ")
+                print(coord1, coord2)
                 image = requests.get(f"https://static-maps.yandex.ru/1.x/?ll={coord1},{coord2}&z={self.z}&size=450,450&l={self.map_type}")
             out = open("Map.png", "wb")
             out.write(image.content)

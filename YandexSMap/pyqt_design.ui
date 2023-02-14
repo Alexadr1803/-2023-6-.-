@@ -161,6 +161,19 @@
      <string>Поиск :</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="save">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>660</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сохранить карту</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

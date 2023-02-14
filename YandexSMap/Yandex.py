@@ -1,7 +1,7 @@
-
+# 9А Гаврилюк Александр
 import requests
 import sys
-import time
+import datetime
 from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtGui import QPixmap
@@ -10,20 +10,19 @@ from PyQt5.QtGui import QPixmap
 class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.z = 15
-        uic.loadUi('pyqt_design.ui', self)
-        pixmap = QPixmap("Map.png")
-        self.coord12 = 36.241424
-        self.coord22 = 51.730848
-        self.map_type = "map"
-        self.searcht = None
-        self.setWindowTitle('Static Maps work') 
-        self.coord1.setText(str(self.coord12))
-        self.coord2.setText(str(self.coord22))
-        self.map.setPixmap(pixmap)
-        self.map.resize(pixmap.width(), pixmap.height())
-        self.start.clicked.connect(self.button)
+        self.z = 15 #стандартное значение маштаба карты
+        uic.loadUi('pyqt_design.ui', self) # загрузка шаблона расположения кнопок
+        self.coord12 = 36.241424 # значение широты в данный момент
+        self.coord22 = 51.730848 # значение долготы в данный момент
+        self.map_type = "map" # тип слоев карты
+        self.searcht = None # текст поиска
+        self.pixmap = None # изображение карты
+        self.setWindowTitle('Static Maps work') # заголовок окна
+        self.coord1.setText(str(self.coord12)) # текст поля широты
+        self.coord2.setText(str(self.coord22)) # текст поля долготы
+        self.start.clicked.connect(self.button) # отслеживание нажатия кнопки поиска
         self.on_b.clicked.connect(self.button)
+        self.save.clicked.connect(self.save_map) # отслеживание нажатий кнопки активации слоя карты
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_PageUp:
@@ -110,23 +109,20 @@ class MyWidget(QMainWindow):
                 image = requests.get(f"https://static-maps.yandex.ru/1.x/?ll={coord1},{coord2}&z={self.z}&size=450,450&l={self.map_type}")
             out = open("Map.png", "wb")
             out.write(image.content)
+            self.pixmap = image.content
             out.close()
             pixmap = QPixmap("Map.png")
             self.map.setPixmap(pixmap)
             self.map.resize(pixmap.width(), pixmap.height())
-            time.sleep(0.1)
+    
+    def save_map(self):
+        with open(f"map_save{str(datetime.datetime.now()).replace(':', '_')}.png", "wb") as map:
+            map.write(self.pixmap)
 
 
 if __name__ == '__main__':
-    try:
-        app = QApplication(sys.argv)
-        ex = MyWidget()
-        ex.button()
-        ex.show()
-        sys.exit(app.exec_())
-    except:
-        app = QApplication(sys.argv)
-        ex = MyWidget()
-        ex.button()
-        ex.show()
-        sys.exit(app.exec_())
+    app = QApplication(sys.argv)
+    ex = MyWidget()
+    ex.button()
+    ex.show()
+    sys.exit(app.exec_())

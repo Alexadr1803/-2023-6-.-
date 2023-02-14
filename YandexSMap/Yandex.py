@@ -33,16 +33,16 @@ class MyWidget(QMainWindow):
                 self.z -= 1
         if event.key() == QtCore.Qt.Key_D:
             if self.coord12 <= 179.95:
-                self.coord1.setText(str(round(self.coord12 + 0.01, 5)))
+                self.coord1.setText(str(round(self.coord12 + 0.001, 5)))
         if event.key() == QtCore.Qt.Key_S:
             if self.coord22 >= -88.95:
-                self.coord2.setText(str(round(self.coord22 - 0.01, 5)))
+                self.coord2.setText(str(round(self.coord22 - 0.001, 5)))
         if event.key() == QtCore.Qt.Key_A:
             if self.coord12 >= -179.95:
-                self.coord1.setText(str(round(self.coord12 - 0.01, 5)))
+                self.coord1.setText(str(round(self.coord12 - 0.001, 5)))
         if event.key() == QtCore.Qt.Key_W:
             if self.coord22 <= 88.95:
-                self.coord2.setText(str(round(self.coord22 + 0.01, 5)))
+                self.coord2.setText(str(round(self.coord22 + 0.001, 5)))
         self.button()
         self.tart()
         event.accept()
@@ -116,7 +116,7 @@ class MyWidget(QMainWindow):
             self.map.resize(pixmap.width(), pixmap.height())
     
     def save_map(self):
-        with open(f"map_save{str(datetime.datetime.now()).replace(':', '_')}.png", "wb") as map:
+        with open(f"map_saves\\map_save{str(datetime.datetime.now()).replace(':', '_')}.png", "wb") as map:
             map.write(self.pixmap)
 
 
